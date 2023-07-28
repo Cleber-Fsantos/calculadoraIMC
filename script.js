@@ -5,9 +5,9 @@
 // OK     3.Gerar a classificação IMC
 // OK     4.Organizar os dados dos usuários para salvar na lista e gerar a data de cadastro
 // OK     5.inserir o usuário na lista(salvar no localStorage)
-//      6.Função para carregar os usuários(localStorage), chamar ao carregar
-//      7.Reenderizar o conteúdo da tabela com os usuários cadastrados
-//      8.Botão para limpar os registros dos formulários(localStorage)
+// OK     6.Função para carregar os usuários(localStorage), chamar ao carregar
+// OK     7.Reenderizar o conteúdo da tabela com os usuários cadastrados
+// OK     8.Botão para limpar os registros dos formulários(localStorage)
 
 function calcular(event){
     //Previni o recarregar da página
@@ -20,6 +20,7 @@ function calcular(event){
     //Usuario recebe os dados atualizados
     usuario = organizarDados(usuario, imcCalculado, classificacaoImc);
     cadastrarUsuario(usuario);
+    window.location.reload();
 };
 
 function receberValores(){
@@ -94,13 +95,42 @@ function carregarUsuarios(){
 
     if(listaCarregada.length == 0){
         //se a lista estiver vazia mostre uma msg
-        let tabela = document.getElementById("corpo-tabela")
+        let tabela = document.getElementById("corpo-tabela");
 
-        tabela.innerHTML = "Nenhum Usuário Cadastrado"
-
+        tabela.innerHTML = `<tr class="linha-mensagem">
+            <td colspan="6">Nenhum usuário cadastrado 😢</td>
+        </tr>`
+    } else{
+        //Mostrar conteúdo da tabela
+        montarTabela(listaCarregada);
     }
 
     console.log (listaCarregada);
 }
 
 window.addEventListener("DOMContentLoaded", () => carregarUsuarios());
+
+function montarTabela(listaUsuarios_){
+    let tabela = document.getElementById("corpo-tabela");
+
+    let template = "";
+
+    listaUsuarios_.forEach(usuario => {
+        template += `<tr>
+            <td data-cell="nome">${usuario.nome}</td>
+            <td data-cell="altura">${usuario.altura}</td>
+            <td data-cell="peso">${usuario.peso}</td>
+             <td data-cell="valor do IMC">${usuario.imc.toFixed(2)}</td>
+            <td data-cell="classificação do IMC">${usuario.situacaoImc}</td>
+            <td data-cell="data de cadastro">${usuario.dataCadastro}</td> 
+        </tr>`
+        
+    });
+
+    tabela.innerHTML = template;
+}
+
+function deletarRegistros(){
+    localStorage.removeItem("usuariosCadastrados");
+    window.location.reload();
+}
